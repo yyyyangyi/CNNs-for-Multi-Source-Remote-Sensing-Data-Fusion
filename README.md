@@ -6,7 +6,7 @@ Implementation of the paper "Multi-stream as Regularization: Rethinking Convolut
 Neural Network Architecture for Multi-source Remote Sensing Data". 
 
 ## Usage
-
+- Requirements: python3, pytorch, gdal, sklearn. 
 - Simply run 
 ```
 python3 main.py
