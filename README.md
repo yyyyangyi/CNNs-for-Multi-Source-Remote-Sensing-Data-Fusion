@@ -15,5 +15,7 @@ python3 main.py
 
 ## Data
 Houston2018 data set is available at https://ieee-dataport.org/open-access/2018-ieee-grss-data-fusion-challenge-%E2%80%93-fusion-multispectral-lidar-and-hyperspectral-data.
+
 Berlin data set is available at https://github.com/danfenghong/ISPRS_S2FL.
+
 MUUFL data set is available at https://github.com/GatorSense/MUUFLGulfport/tree/master/MUUFLGulfportSceneLabels.
