@@ -2,8 +2,7 @@
 
 ## Description
 
-Implementation of the paper "Multi-stream as Regularization: Rethinking Convolutional 
-Neural Network Architecture for Multi-source Remote Sensing Data". (under review)
+Implementation of the paper "Single-stream CNN with Learnable Architecture for Multi-source Remote Sensing Data". (under review)
 
 ## Usage
 - Requirements: python3, pytorch, gdal, sklearn. 
