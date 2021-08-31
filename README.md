@@ -11,7 +11,7 @@ Neural Network Architecture for Multi-source Remote Sensing Data". (under review
 ```
 python3 main.py
 ```
-- Training / model arguments can be changed by modifying ```common.py```. Arguments are automatically loaded to ```main.py```.
+- To customize training/model arguments, modify ```common.py```. Arguments are automatically loaded to ```main.py```.
 
 ## Data
 Houston2018 data set is available at https://ieee-dataport.org/open-access/2018-ieee-grss-data-fusion-challenge-%E2%80%93-fusion-multispectral-lidar-and-hyperspectral-data.
