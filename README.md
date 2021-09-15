@@ -4,6 +4,8 @@
 
 Implementation of the paper "Single-stream CNN with Learnable Architecture for Multi-source Remote Sensing Data". (under review)
 
+[[arxiv]](http://arxiv.org/abs/2109.06094)
+
 ## Usage
 - Requirements: python3, pytorch, gdal, sklearn. 
 - Simply run 
