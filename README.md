@@ -15,8 +15,7 @@ python3 main.py
 - To customize training/model arguments, modify ```common.py```. Arguments are automatically loaded to ```main.py```.
 
 ## Data
-Our preprocessed data sets are available at [this Google Drive site](https://drive.google.com/drive/folders/1urY6Pjba3mStDcRphIfkNf50295aW2o2?usp=sharing), 
-which can be directly used in this code. 
+We made some modifications (merely tif→numpy, stacking) to the original data files. Our data files are available at [this Google Drive site](https://drive.google.com/drive/folders/1urY6Pjba3mStDcRphIfkNf50295aW2o2?usp=sharing), which can be directly used in this code. Please note that we used channel-wise normalization AFTER loading these files, and this step is already implemented in our code. 
 
 Below are links to the original data sets:
 
