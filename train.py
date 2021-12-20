@@ -17,7 +17,7 @@ def _checkpoint(model, optimizer, ckpt_path, loss=0.0):
             'loss': loss
             }, ckpt_path)
     
-def train(model, train_loader, optimizer, criterion, num_epochs=100, mask_undefined=True, 
+def train(model, train_loader, optimizer, criterion, num_epochs=100, rep=0, mask_undefined=True, 
           save_ckpt_dir=None, use_gpu=True, lr_schedule=None, verbose=True):
     if use_gpu:
         model = model.cuda()
