@@ -30,7 +30,7 @@ def test_seg(model, X_test, sample_h=128, sample_w=128):
             else:
                 left = c
                 right = c + sample_w
-            x = X_data[:, top:bottum, left:right]
+            x = X_test[:, top:bottum, left:right]
             x = torch.Tensor(x)
             x = x.unsqueeze(0).cuda()
             outputs = model(x)
@@ -52,7 +52,7 @@ def test_clf(model, X_test, y_test=None, sample_radius=8, batch_test=64):
         for c in range(sample_radius, data_cols-sample_radius):
             if y_test is not None:
                 if y_test[r-sample_radius, c-sample_radius] > 0:
-                    x = X_data[:, r-sample_radius:r+sample_radius+1, c-sample_radius:c+sample_radius+1]
+                    x = X_test[:, r-sample_radius:r+sample_radius+1, c-sample_radius:c+sample_radius+1]
                     x_batch.append(x)
                     batch_count += 1
                     if batch_count == batch_test:
@@ -65,7 +65,7 @@ def test_clf(model, X_test, y_test=None, sample_radius=8, batch_test=64):
                         batch_count = 0
                         x_batch = []
             else:
-                x = X_data[:, r-sample_radius:r+sample_radius+1, c-sample_radius:c+sample_radius+1]
+                x = X_test[:, r-sample_radius:r+sample_radius+1, c-sample_radius:c+sample_radius+1]
                 x_batch.append(x)
                 batch_count += 1
                 if batch_count == batch_test:
