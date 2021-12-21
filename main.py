@@ -110,11 +110,11 @@ def main():
         else:
             criterion = torch.nn.CrossEntropyLoss(weight=class_weights)
         model = _get_model(Config.model, input_channels=X_test.shape[0], n_classes=num_classes, 
-                           use_dgconv=True, use_init=Config.use_init)
+                           use_dgconv=False, use_init=Config.use_init, use_fgconv=True)
         optimizer = _get_optimizer(model, opt_name=Config.optimizer, lr=Config.lr)
         # train
         model, losses = train(model, train_loader, optimizer, criterion, 
-                              num_epochs=epochs, mask_undefined=Config.mask_undefined, 
+                              num_epochs=epochs, rep=rep, mask_undefined=Config.mask_undefined, 
                               save_ckpt_dir=Config.save_ckpt_dir, use_gpu=Config.use_gpu, 
                               lr_schedule=Config.lr_schedule, verbose=True)
         # test & eval
@@ -123,7 +123,7 @@ def main():
                 pred_map = test.test_seg(model, X_test, Config.sample_h, Config.sample_w)
             else:
                 pred_map = test.test_clf(model, X_test, sample_radius=Config.sample_radius)
-            y_pred_all = y_pred_all[y_test>0]
+            y_pred_all = pred_map[y_test>0]
             y_true_all = y_test[y_test>0]
             conf_mats[rep] = confusion_matrix(y_true_all, y_pred_all)
             p_scores[rep] = precision_score(y_true_all, y_pred_all, average=None)
