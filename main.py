@@ -110,7 +110,7 @@ def main():
         else:
             criterion = torch.nn.CrossEntropyLoss(weight=class_weights)
         model = _get_model(Config.model, input_channels=X_test.shape[0], n_classes=num_classes, 
-                           use_dgconv=False, use_init=Config.use_init, use_fgconv=True)
+                           use_dgconv=True, use_init=Config.use_init)
         optimizer = _get_optimizer(model, opt_name=Config.optimizer, lr=Config.lr)
         # train
         model, losses = train(model, train_loader, optimizer, criterion, 
