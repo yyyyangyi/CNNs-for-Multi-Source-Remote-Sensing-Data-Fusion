@@ -81,7 +81,8 @@ def _get_optimizer(model, opt_name='adam', lr=0.001):
     
 def main():
  
-    X, y, X_test, y_test = _get_dataset(Config.dataset, Config.data_dir)
+    if Config.dataset != 'muufl':
+        X, y, X_test, y_test = _get_dataset(Config.dataset, Config.data_dir)
     
     num_replicates = Config.num_replicates
     num_classes = Config.num_classes
@@ -99,6 +100,8 @@ def main():
         _seed = seed + rep
         _seed_everything(_seed)
         
+        if Config.dataset == 'muufl':
+            X, y, X_test, y_test = _get_dataset(Config.dataset, Config.data_dir)
         train_set, val_set = _split_train_val(X, y, train_ratio=1.0)
         train_loader = DataLoader(dataset=train_set, batch_size=Config.batch_size, shuffle=True)
         
@@ -110,7 +113,7 @@ def main():
         else:
             criterion = torch.nn.CrossEntropyLoss(weight=class_weights)
         model = _get_model(Config.model, input_channels=X_test.shape[0], n_classes=num_classes, 
-                           use_dgconv=True, use_init=Config.use_init)
+                           use_dgconv=Config.use_dgconv, use_init=Config.use_init, fix_groups=Config.fix_groups)
         optimizer = _get_optimizer(model, opt_name=Config.optimizer, lr=Config.lr)
         # train
         model, losses = train(model, train_loader, optimizer, criterion, 

@@ -7,10 +7,11 @@
 import os
 import numpy as np
 import scipy.io as scio
+from common import Config
 
 
-SAMPLE_RADIUS = 5
-NUM_CLASSES = 11
+SAMPLE_RADIUS = Config.sample_radius
+NUM_CLASSES = Config.num_classes
 
 def load_dataset(data_dir):
     _TRAIN_SIZE = 100

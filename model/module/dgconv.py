@@ -38,7 +38,7 @@ def _kronecker_product(mat1, mat2):
 
 
 class DGConv2d(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, bias=True, sort=True):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, bias=True, sort=True, groups=1):
         super(DGConv2d, self).__init__()
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride, 
                               padding=padding, dilation=dilation, bias=bias)
@@ -46,6 +46,10 @@ class DGConv2d(nn.Module):
         self.out_channels = out_channels
         self.register_buffer('D', torch.eye(2))
         self.register_buffer('I', torch.ones(2, 2))
+        
+        self.groups = groups
+        if groups > 1:
+            self.register_buffer('group_mask', _kronecker_product(torch.ones(out_channels//groups, in_channels//groups), torch.eye(groups)))
         
         if self.out_channels // self.in_channels >= 2:    # Group-up
             self.K = int(np.ceil(math.log2(in_channels)))  # U: [in_channels, in_channels]
@@ -79,6 +83,8 @@ class DGConv2d(nn.Module):
             U = torch.mm(U, self._I)
 
         U = U[:self.out_channels, :self.in_channels]
+        if self.groups > 1:
+            U = U * self.group_mask
         masked_weight = self.conv.weight * U.view(self.out_channels, self.in_channels, 1, 1)
             
         x = F.conv2d(x, masked_weight, self.conv.bias, self.conv.stride, self.conv.padding, self.conv.dilation)

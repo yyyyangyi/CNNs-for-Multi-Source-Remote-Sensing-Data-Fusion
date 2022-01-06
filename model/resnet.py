@@ -10,6 +10,7 @@ import torch
 import torch.nn as nn
 
 from model.module.dgconv import DGConv2d
+from model.module.fgconv import FGConv2d
 
 
 class BasicBlock(nn.Module):
@@ -19,14 +20,14 @@ class BasicBlock(nn.Module):
     '''
     expansion = 1
     
-    def __init__(self, inplanes, out_channels, stride=1, dilation=1, downsample=None, use_dgconv=True):
+    def __init__(self, inplanes, out_channels, stride=1, dilation=1, downsample=None, use_dgconv=True, groups=1):
         super(BasicBlock, self).__init__()
         if use_dgconv:
-            self.conv1 = DGConv2d(inplanes, out_channels, 3, stride, padding=1, bias=False)
-            self.conv2 = DGConv2d(out_channels, out_channels, 3, 1, padding=1, bias=False)
+            self.conv1 = DGConv2d(inplanes, out_channels, 3, stride, padding=1, bias=False, groups=groups)
+            self.conv2 = DGConv2d(out_channels, out_channels, 3, 1, padding=1, bias=False, groups=groups)
         else:
-            self.conv1 = nn.Conv2d(inplanes, out_channels, 3, stride, padding=1, bias=False)
-            self.conv2 = nn.Conv2d(out_channels, out_channels, 3, 1, padding=1, bias=False)
+            self.conv1 = nn.Conv2d(inplanes, out_channels, 3, stride, padding=1, bias=False, groups=groups)
+            self.conv2 = nn.Conv2d(out_channels, out_channels, 3, 1, padding=1, bias=False, groups=groups)
         self.bn1 = nn.BatchNorm2d(out_channels)
         self.bn2 = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU(inplace=True)
@@ -53,19 +54,19 @@ class Bottleneck(nn.Module):
     '''
     expansion = 4
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1, use_dgconv=True):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1, use_dgconv=True, groups=1):
         super(Bottleneck, self).__init__()
         if use_dgconv:
             # Requires inplanes>planes & inplanes%planes=0, as in standard resnet50
             self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False, groups=planes)
             self.conv2 = DGConv2d(planes, planes, kernel_size=3, stride=stride, 
-                                  padding=dilation, bias=False, dilation=dilation)
+                                  padding=dilation, bias=False, dilation=dilation, groups=groups)
             self.conv3 = nn.Conv2d(planes, planes*self.expansion, kernel_size=1, bias=False, groups=planes)
         else:
-            self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
+            self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False, groups=groups)
             self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride,
-                                   padding=dilation, bias=False, dilation=dilation)
-            self.conv3 = nn.Conv2d(planes, planes*self.expansion, kernel_size=1, bias=False)
+                                   padding=dilation, bias=False, dilation=dilation, groups=groups)
+            self.conv3 = nn.Conv2d(planes, planes*self.expansion, kernel_size=1, bias=False, groups=groups)
             
         self.bn1 = nn.BatchNorm2d(planes)
         self.bn2 = nn.BatchNorm2d(planes)
@@ -100,7 +101,7 @@ class Bottleneck(nn.Module):
 class ResNet(nn.Module):
 
     def __init__(self, block, num_layer, n_classes=1000, input_channels=3, 
-                 replace_stride_with_dilation=None, use_init=False, use_dgconv=True):
+                 replace_stride_with_dilation=None, use_init=False, use_dgconv=True, fix_groups=1):
         super(ResNet, self).__init__()
         self.dilation = 1
         self.inplanes = 64
@@ -113,19 +114,30 @@ class ResNet(nn.Module):
                              "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
             
         if use_dgconv:
-            self.conv1 = DGConv2d(input_channels, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
+            if fix_groups > 1:
+                # muufl - [64,2]
+                # berlin - [244,4]
+                # houston - [3,48,3,4]
+                self.conv1 = FGConv2d(input_channels, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False, 
+                                     in_groups=[64,2], out_groups=[32,32])
+            else:
+                self.conv1 = DGConv2d(input_channels, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
         else:
-            self.conv1 = nn.Conv2d(input_channels, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
+            if fix_groups > 1:
+                self.conv1 = FGConv2d(input_channels, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False, 
+                                     in_groups=[64,2], out_groups=[32,32])
+            else:
+                self.conv1 = nn.Conv2d(input_channels, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.maxpool = nn.MaxPool2d(3, stride=2, padding=1)
         self.relu = nn.ReLU(inplace=True)
-        self.layer1 = self._make_layer(block, 64, num_layer[0], use_dgconv=use_dgconv)
+        self.layer1 = self._make_layer(block, 64, num_layer[0], use_dgconv=use_dgconv, groups=fix_groups)
         self.layer2 = self._make_layer(block, 128, num_layer[1], stride=2, 
-                                       dilate=replace_stride_with_dilation[0], use_dgconv=use_dgconv)
+                                       dilate=replace_stride_with_dilation[0], use_dgconv=use_dgconv, groups=fix_groups)
         self.layer3 = self._make_layer(block, 256, num_layer[2], stride=2, 
-                                       dilate=replace_stride_with_dilation[1], use_dgconv=use_dgconv)
+                                       dilate=replace_stride_with_dilation[1], use_dgconv=use_dgconv, groups=fix_groups)
         self.layer4 = self._make_layer(block, 512, num_layer[3], stride=2, 
-                                       dilate=replace_stride_with_dilation[2], use_dgconv=use_dgconv)
+                                       dilate=replace_stride_with_dilation[2], use_dgconv=use_dgconv, groups=fix_groups)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(block.expansion*512, n_classes)
         
@@ -141,7 +153,7 @@ class ResNet(nn.Module):
                 elif isinstance(m, BasicBlock):
                     nn.init.constant_(m.bn2.weight, 0)  # type: ignore[arg-type]
 
-    def _make_layer(self, block, out_channels, num_block, stride=1, dilate=False, use_dgconv=True):
+    def _make_layer(self, block, out_channels, num_block, stride=1, dilate=False, use_dgconv=True, groups=1):
         downsample = None
         previous_dilation = self.dilation
         if dilate:
@@ -149,15 +161,15 @@ class ResNet(nn.Module):
             stride = 1
         if stride != 1 or self.inplanes != out_channels*block.expansion:
             downsample = nn.Sequential(
-                nn.Conv2d(self.inplanes, out_channels*block.expansion, 1, stride=stride, bias=False),
+                nn.Conv2d(self.inplanes, out_channels*block.expansion, 1, stride=stride, bias=False, groups=groups),
                 nn.BatchNorm2d(out_channels*block.expansion)
             )
         layers = []
         layers.append(block(self.inplanes, out_channels, stride=stride, downsample=downsample, 
-                            dilation=previous_dilation, use_dgconv=use_dgconv))
+                            dilation=previous_dilation, use_dgconv=use_dgconv, groups=groups))
         self.inplanes = out_channels*block.expansion
         for _ in range(1, num_block):
-            layers.append(block(self.inplanes, out_channels, dilation=self.dilation, use_dgconv=use_dgconv))
+            layers.append(block(self.inplanes, out_channels, dilation=self.dilation, use_dgconv=use_dgconv, groups=groups))
         return nn.Sequential(*layers)
 
     def forward(self, input):
