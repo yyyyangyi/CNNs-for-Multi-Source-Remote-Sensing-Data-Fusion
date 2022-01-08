@@ -6,9 +6,9 @@
 
 class Config():
     
-    save_ckpt_dir = '/home/yy/code/ckpt/muufl/resnet18/dgconv_group/'
-    result_out_dir = '/home/yy/code/results/muufl/resnet18/dgconv_group/'
-    data_dir = '/home/yy/data/muufl/'
+    save_ckpt_dir = ''
+    result_out_dir = ''
+    data_dir = ''
     
     use_gpu = True
     use_dgconv = True
