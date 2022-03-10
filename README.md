@@ -22,7 +22,7 @@ _Fusion-FCN_: A three-branch CNN for MS-HSI-LiDAR data fusion. Award-winning mod
 
 _Two-branch CNN_ (_TB-CNN_): A two-branch CNN architecture for feasture fusion with HSI and other remote scensing imagery. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/) [[Official Tensorflow implementation]](https://github.com/Hsuxu/Two-branch-CNN-Multisource-RS-classification)
 
-Implementation of these models can be found at ```models/baseline/```. 
+Implementation of these models can be found at ```model/baseline/```. 
 
 ## Data
 We made some modifications (merely tif→numpy, stacking) to the original data files. Our data files are available at [this Google Drive site](https://drive.google.com/drive/folders/1urY6Pjba3mStDcRphIfkNf50295aW2o2?usp=sharing), which can be directly used in this code. Please note that we used channel-wise normalization AFTER loading these files, and this step is already implemented in our code. 
