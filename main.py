@@ -12,6 +12,7 @@ from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_
 from common import Config
 from train import train
 import test
+import _utils
     
 
 def _seed_everything(seed):
@@ -22,67 +23,11 @@ def _seed_everything(seed):
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     
-def _get_dataset(ds_name, ds_dir):
-    if ds_name == 'houston':
-        from data.dataset_houston import load_dataset
-    elif ds_name == 'berlin':
-        from data.dataset_berlin import load_dataset
-    elif ds_name == 'muufl':
-        from data.dataset_muufl import load_dataset
-    else:
-        raise NotImplementedError('Data set not implemented!')
-    return load_dataset(ds_dir)
-    
-def _split_train_val(X, y, train_ratio=1.0):
-    X_tensor = torch.Tensor(X)
-    y_tensor = torch.LongTensor(y)
-    data_set = TensorDataset(X_tensor, y_tensor)
-    total_size = len(data_set)
-    train_size = int(total_size*train_ratio)
-    val_size = total_size - train_size
-    if val_size > 0:
-        train_set, val_set = torch.utils.data.random_split(data_set, [train_size, val_size])
-    else:
-        train_set = data_set
-        val_set = None
-    return train_set, val_set
-
-def _get_class_weights(y, num_classes, mask):
-    num_samples = np.zeros((num_classes,))
-    if mask:
-        for i in range(1, num_classes+1):
-            num_samples[i-1] = np.sum(y==i)
-    else:
-        for i in range(num_classes):
-            num_samples[i] = np.sum(y==i)
-    class_weights = [1 - (n / sum(num_samples)) for n in num_samples]
-    return torch.FloatTensor(class_weights)
-
-def _get_model(model_name='resnet18', **kwargs):
-    if model_name == 'unet':
-        from model.unet import UNet
-        return UNet(**kwargs)
-    elif model_name == 'resnet18':
-        from model.resnet import resnet18
-        return resnet18(**kwargs)
-    elif model_name == 'resnet50':
-        from model.resnet import resnet50
-        return resnet50(**kwargs)
-    else:
-        raise NotImplementedError('Model not implemented!')
-        
-def _get_optimizer(model, opt_name='adam', lr=0.001):
-    if opt_name == 'adam':
-        return torch.optim.Adam(model.parameters(), lr=lr)
-    elif opt_name == 'sgd':
-        return torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9)
-    else:
-        raise NotImplementedError('Optimizer not implemented!')
     
 def main():
  
     if Config.dataset != 'muufl':
-        X, y, X_test, y_test = _get_dataset(Config.dataset, Config.data_dir)
+        X, y, X_test, y_test = _utils._get_dataset(Config.dataset, Config.data_dir)
     
     num_replicates = Config.num_replicates
     num_classes = Config.num_classes
@@ -97,24 +42,41 @@ def main():
         oa_arr = np.zeros((num_replicates,))
     
     for rep in range(num_replicates):
+        # fix random seeds
         _seed = seed + rep
         _seed_everything(_seed)
         
+        # prepare data
         if Config.dataset == 'muufl':
-            X, y, X_test, y_test = _get_dataset(Config.dataset, Config.data_dir)
-        train_set, val_set = _split_train_val(X, y, train_ratio=1.0)
+            X, y, X_test, y_test = _utils._get_dataset(Config.dataset, Config.data_dir)
+        train_set, val_set = _utils._split_train_val(X, y, train_ratio=1.0)
         train_loader = DataLoader(dataset=train_set, batch_size=Config.batch_size, shuffle=True)
         
-        class_weights = _get_class_weights(y, num_classes, Config.mask_undefined)
+        # prepare model and optimizer
+        class_weights = _utils._get_class_weights(y, num_classes, Config.mask_undefined)
         if Config.use_gpu:
             class_weights = class_weights.cuda()
         if Config.mask_undefined:
             criterion = torch.nn.CrossEntropyLoss(weight=class_weights, reduction='none')
         else:
             criterion = torch.nn.CrossEntropyLoss(weight=class_weights)
-        model = _get_model(Config.model, input_channels=X_test.shape[0], n_classes=num_classes, 
-                           use_dgconv=Config.use_dgconv, use_init=Config.use_init, fix_groups=Config.fix_groups)
-        optimizer = _get_optimizer(model, opt_name=Config.optimizer, lr=Config.lr)
+            
+        if Config.ckpt_dir:
+            ckpt = torch.load(os.path.join(Config.ckpt_dir, 'ckpt_rep%d_epoch100.pth'%rep))
+        else:
+            ckpt = None
+        if Config.model == 'fusion_fcn':
+            model = _utils._get_model(Config.model, ckpt=ckpt, in_channel_branch=[6, 7, 55], n_classes=num_classes, use_init=Config.use_init)
+        elif Config.model == 'tb_cnn':
+            model = _utils._get_model(Config.model, ckpt=ckpt, in_channel_branch=[64, 2], n_classes=num_classes, patch_size=Config.sample_radius)
+        else:
+            # ResNets
+            model = _utils._get_model(Config.model, ckpt=ckpt, input_channels=X_test.shape[0], n_classes=num_classes, 
+                               use_dgconv=Config.use_dgconv, use_init=Config.use_init, fix_groups=Config.fix_groups)
+        if Config.use_gpu:
+            model = model.cuda()
+        optimizer = _utils._get_optimizer(model, opt_name=Config.optimizer, lr=Config.lr, ckpt=ckpt)
+        
         # train
         model, losses = train(model, train_loader, optimizer, criterion, 
                               num_epochs=epochs, rep=rep, mask_undefined=Config.mask_undefined, 

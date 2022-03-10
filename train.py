@@ -19,8 +19,6 @@ def _checkpoint(model, optimizer, ckpt_path, loss=0.0):
     
 def train(model, train_loader, optimizer, criterion, num_epochs=100, rep=0, mask_undefined=True, 
           save_ckpt_dir=None, use_gpu=True, lr_schedule=None, verbose=True):
-    if use_gpu:
-        model = model.cuda()
     
     if lr_schedule is not None:
         scheduler = MultiStepLR(optimizer, milestones=lr_schedule, gamma=0.1)
