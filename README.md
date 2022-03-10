@@ -1,10 +1,10 @@
-# Multi-source-RS-DGConv
+# CNNs for Multi-Source Remote Sensing Data Fusion
 
 ## Description
 
-Implementation of the paper "Single-stream CNN with Learnable Architecture for Multi-source Remote Sensing Data". (under review) [[arxiv]](http://arxiv.org/abs/2109.06094)
+Pytorch implementation of the paper "Single-stream CNN with Learnable Architecture for Multi-source Remote Sensing Data". (under review) [[arxiv]](http://arxiv.org/abs/2109.06094)
 
-In this work we propose an efficient and generalizable framework based on CNNs for multi-source remote sensing data joint classification. We adopt and improve dynamic grouping convolution to learn our network architecture, so that our single-stream CNN can theoretically approximate any multi-stream architecture, while the latter has received more attention in the literature. Our learnable architecture can also avoid sub-optimal solutions due to manually decided hyperparameters.  In the experiments, the proposed method is applied to ResNet and UNet, and the CNNs are verified on three very diverse benchmark data sets. Experimental results have demonstrated the effectiveness of our proposed method. In addition, experimental results imply that multi-stream architecture, instead of being a strictly necessary component in deep learning models for multi-source remote sensing data, essentially plays the role of model regularizer. 
+Multi-stream CNNs are commonly used in multi-source remote sensing data fusion. In this work we propose an efficient strategy that enables single-stream CNNs to approximate multi-stream models using group convolution. The proposed method is applied to ResNet and UNet, and evaluated on Houston2018, Berlin, MUUFL data sets, with promising results. We have an interesting finding that in these models regularization plays a very important role in improving model perfomance. 
 
 ## Usage
 - Requirements: python3, pytorch, gdal, sklearn. 
@@ -14,13 +14,27 @@ python3 main.py
 ```
 - To customize training/model arguments, modify ```common.py```. Arguments are automatically loaded to ```main.py```.
 
+## Baseline models
+
+This repository also contains Pytorch implementation of the following models, which we use as baselines: 
+
+Fusion-FCN: a three-branch CNN, award-winning model in 2018 IEEE DFC. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/)
+
+Two-branch CNN: A two-branch CNN architecture for feasture fusion with HSI and other remote scensing imagery. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/) [[Official Tensorflow implementation]](https://github.com/Hsuxu/Two-branch-CNN-Multisource-RS-classification)
+
 ## Data
 We made some modifications (merely tif→numpy, stacking) to the original data files. Our data files are available at [this Google Drive site](https://drive.google.com/drive/folders/1urY6Pjba3mStDcRphIfkNf50295aW2o2?usp=sharing), which can be directly used in this code. Please note that we used channel-wise normalization AFTER loading these files, and this step is already implemented in our code. 
 
 Below are links to the original data sets:
 
 [Houston2018](https://ieee-dataport.org/open-access/2018-ieee-grss-data-fusion-challenge-%E2%80%93-fusion-multispectral-lidar-and-hyperspectral-data)
-
 [Berlin](https://github.com/danfenghong/ISPRS_S2FL)
-
 [MUUFL](https://github.com/GatorSense/MUUFLGulfport/tree/master/MUUFLGulfportSceneLabels)
+
+## Results
+
+| Dataset | OA (%) | Kappa |
+| --- | ----------- | ----- |
+| Houston2018 | 63.74 | 0.62 |
+| Berlin | 68.21 | 0.54 |
+| MUUFL | 86.44 | 0.83 |
