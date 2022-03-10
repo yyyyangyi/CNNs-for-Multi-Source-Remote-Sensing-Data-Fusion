@@ -4,7 +4,7 @@
 
 Pytorch implementation of the paper "Single-stream CNN with Learnable Architecture for Multi-source Remote Sensing Data". (under review) [[arxiv]](http://arxiv.org/abs/2109.06094)
 
-Multi-stream CNNs are commonly used in multi-source remote sensing data fusion. In this work we propose an efficient strategy that enables single-stream CNNs to approximate multi-stream models using group convolution. The proposed method is applied to ResNet and UNet, and evaluated on Houston2018, Berlin, MUUFL data sets, with promising results. We have an interesting finding that in these models regularization plays a very important role in improving model perfomance. 
+Multi-stream CNNs are commonly used in multi-source remote sensing data fusion. In this work we propose an efficient strategy that enables single-stream CNNs to approximate multi-stream models using group convolution. The proposed method is applied to ResNet and UNet, and evaluated on Houston2018, Berlin, MUUFL data sets, obtaining promising results. An interesting finding is that regularization is very important in these models. 
 
 ## Usage
 - Requirements: python3, pytorch, gdal, sklearn. 
@@ -18,9 +18,11 @@ python3 main.py
 
 This repository also contains Pytorch implementation of the following models, which we use as baselines: 
 
-Fusion-FCN: a three-branch CNN for MS-HSI-LiDAR data fusion. Award-winning model in 2018 IEEE DFC. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/)
+Fusion-FCN: A three-branch CNN for MS-HSI-LiDAR data fusion. Award-winning model in 2018 IEEE DFC. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/)
 
 Two-branch CNN (TB-CNN): A two-branch CNN architecture for feasture fusion with HSI and other remote scensing imagery. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/) [[Official Tensorflow implementation]](https://github.com/Hsuxu/Two-branch-CNN-Multisource-RS-classification)
+
+Implementation of these models can be found at ```models/baseline/```. 
 
 ## Data
 We made some modifications (merely tif→numpy, stacking) to the original data files. Our data files are available at [this Google Drive site](https://drive.google.com/drive/folders/1urY6Pjba3mStDcRphIfkNf50295aW2o2?usp=sharing), which can be directly used in this code. Please note that we used channel-wise normalization AFTER loading these files, and this step is already implemented in our code. 
