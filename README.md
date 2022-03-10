@@ -18,7 +18,7 @@ python3 main.py
 
 This repository also contains Pytorch implementation of the following models, which we use as baselines: 
 
-Fusion-FCN: a three-branch CNN, award-winning model in 2018 IEEE DFC. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/)
+Fusion-FCN: a three-branch CNN for MS-HSI-LiDAR data fusion. Award-winning model in 2018 IEEE DFC. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/)
 
 Two-branch CNN (TB-CNN): A two-branch CNN architecture for feasture fusion with HSI and other remote scensing imagery. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/) [[Official Tensorflow implementation]](https://github.com/Hsuxu/Two-branch-CNN-Multisource-RS-classification)
 
