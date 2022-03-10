@@ -20,16 +20,16 @@ This repository also contains Pytorch implementation of the following models, wh
 
 Fusion-FCN: a three-branch CNN, award-winning model in 2018 IEEE DFC. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/)
 
-Two-branch CNN: A two-branch CNN architecture for feasture fusion with HSI and other remote scensing imagery. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/) [[Official Tensorflow implementation]](https://github.com/Hsuxu/Two-branch-CNN-Multisource-RS-classification)
+Two-branch CNN (TB-CNN): A two-branch CNN architecture for feasture fusion with HSI and other remote scensing imagery. [[Paper]](https://ieeexplore.ieee.org/abstract/document/8518295/) [[Official Tensorflow implementation]](https://github.com/Hsuxu/Two-branch-CNN-Multisource-RS-classification)
 
 ## Data
 We made some modifications (merely tif→numpy, stacking) to the original data files. Our data files are available at [this Google Drive site](https://drive.google.com/drive/folders/1urY6Pjba3mStDcRphIfkNf50295aW2o2?usp=sharing), which can be directly used in this code. Please note that we used channel-wise normalization AFTER loading these files, and this step is already implemented in our code. 
 
 Below are links to the original data sets:
 
-[Houston2018](https://ieee-dataport.org/open-access/2018-ieee-grss-data-fusion-challenge-%E2%80%93-fusion-multispectral-lidar-and-hyperspectral-data)
-[Berlin](https://github.com/danfenghong/ISPRS_S2FL)
-[MUUFL](https://github.com/GatorSense/MUUFLGulfport/tree/master/MUUFLGulfportSceneLabels)
+[[Houston2018]](https://ieee-dataport.org/open-access/2018-ieee-grss-data-fusion-challenge-%E2%80%93-fusion-multispectral-lidar-and-hyperspectral-data) &nbsp;
+[[Berlin]](https://github.com/danfenghong/ISPRS_S2FL) &nbsp;
+[[MUUFL]](https://github.com/GatorSense/MUUFLGulfport/tree/master/MUUFLGulfportSceneLabels) &nbsp;
 
 ## Results
 
