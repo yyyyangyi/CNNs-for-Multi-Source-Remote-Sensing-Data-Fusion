@@ -8,10 +8,11 @@
 import os
 import numpy as np
 import scipy.io as scio
+from common import Config
 
-CATEGORIES = ['UNDEFINED', 'Forest', 'Residential Area', 'Industrial Area', 'Low Plants', 'Soil', 
-             'Allotment', 'Commercial Area', 'Water']
-SAMPLE_RADIUS = 8
+# CATEGORIES = ['UNDEFINED', 'Forest', 'Residential Area', 'Industrial Area', 'Low Plants', 'Soil', 
+#              'Allotment', 'Commercial Area', 'Water']
+SAMPLE_RADIUS = Config.sample_radius
 
 
 def load_dataset(data_dir):

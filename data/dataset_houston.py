@@ -2,23 +2,26 @@
 # coding: utf-8
 
 
-# Load Houston data set from 2018 IEEE Data Fusion Contest
+# Load Houston data set
 
 
 import os
 import numpy as np
 import gdal
+from common import Config
 
 X_TRAIN_FILE = 'X_train.npy'
 X_TEST_FILE = 'X_test.npy'
 Y_TRAIN_FILE = '2018_IEEE_GRSS_DFC_GT_TR.tif'
 Y_TEST_FILE = 'Test_Labels.tif'
 
-SAMPLE_H = 128
-SAMPLE_W = 128
+SAMPLE_H = Config.sample_h
+SAMPLE_W = Config.sample_w
 STRIDE_ROW = int(SAMPLE_H/2)
 STRIDE_COL = int(SAMPLE_W/2)
-NUM_CLASSES = 20
+# STRIDE_ROW = SAMPLE_H
+# STRIDE_COL = SAMPLE_W
+NUM_CLASSES = Config.num_classes
 
 
 def _get_data_set(X_data, y_data):    
