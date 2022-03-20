@@ -4,7 +4,7 @@
 
 Pytorch implementation of the paper "Single-stream CNN with Learnable Architecture for Multi-source Remote Sensing Data". (under review) [[arxiv]](http://arxiv.org/abs/2109.06094)
 
-Multi-stream CNNs are commonly used in multi-source remote sensing data fusion. In this work we propose an efficient strategy that enables single-stream CNNs to approximate multi-stream models using group convolution. The proposed method is applied to ResNet and UNet, and evaluated on Houston2018, Berlin, MUUFL data sets, obtaining promising results. An interesting finding is that regularization is very important in these models. 
+Multi-stream CNNs are commonly used in multi-source remote sensing data fusion. In this work we propose an efficient strategy that enables single-stream CNNs to approximate multi-stream models using group convolution. The proposed method is applied to ResNet and UNet, and evaluated on Houston2018, Berlin, MUUFL data sets, obtaining promising results. An interesting finding is that regularization is playing an important role in these models. 
 
 <div align="center">
 <img src="fig/method.png" width="60%">
