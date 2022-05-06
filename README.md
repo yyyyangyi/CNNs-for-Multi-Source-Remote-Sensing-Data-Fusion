@@ -2,9 +2,11 @@
 
 ## Description
 
-Pytorch implementation of the paper "Single-stream CNN with Learnable Architecture for Multi-source Remote Sensing Data". (under review) [[arxiv]](http://arxiv.org/abs/2109.06094)
+Pytorch implementation of the paper "Single-stream CNN with Learnable Architecture for Multi-source Remote Sensing Data". 
 
-Multi-stream CNNs are commonly used in multi-source remote sensing data fusion. In this work we propose an efficient strategy that enables single-stream CNNs to approximate multi-stream models using group convolution. The proposed method is applied to ResNet and UNet, and evaluated on Houston2018, Berlin, MUUFL data sets, obtaining promising results. An interesting finding is that regularization is playing an important role in these models. 
+Multi-stream CNNs are commonly used in multi-source remote sensing data fusion. In this work we propose an efficient strategy that enables single-stream CNNs to approximate multi-stream models using group convolution. The proposed method is applied to ResNet and UNet, and evaluated on Houston2018, Berlin, MUUFL data sets, obtaining promising results. An interesting finding is that _regularization_ is playing an important role in these models. 
+
+Find our paper at: [[IEEE Xplore]](https://ieeexplore.ieee.org/document/9761218)  [[arxiv]](http://arxiv.org/abs/2109.06094)
 
 <div align="center">
 <img src="fig/method.png" width="60%">
@@ -45,3 +47,18 @@ Below are links to the original data sets:
 | Houston2018 | 63.74 | 0.62 |
 | Berlin | 68.21 | 0.54 |
 | MUUFL | 86.44 | 0.83 |
+
+## Citation
+
+If you find our work helpful, please kindly cite: 
+```
+@ARTICLE{9761218,
+  author={Yang, Yi and Zhu, Daoye and Qu, Tengteng and Wang, Qiangyu and Ren, Fuhu and Cheng, Chengqi},
+  journal={IEEE Transactions on Geoscience and Remote Sensing}, 
+  title={Single-Stream CNN With Learnable Architecture for Multisource Remote Sensing Data}, 
+  year={2022},
+  volume={60},
+  number={},
+  pages={1-18},
+  doi={10.1109/TGRS.2022.3169163}}
+```
